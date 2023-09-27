@@ -14,11 +14,20 @@ func welcome(c *fiber.Ctx) error {
 
 func setupRoutes(app *fiber.App) {
 	app.Get("/", welcome)
+	app.Post("/user", routes.CreateUser)
 	app.Get("/users", routes.GetUsers)
 	app.Get("/user/:id", routes.GetUserById)
-	app.Post("/user", routes.CreateUser)
 	app.Put("/user/:id", routes.UpdateUser)
 	app.Delete("/user/:id", routes.DeleteUser)
+
+	app.Post("/product", routes.CreateProduct)
+	app.Get("/products", routes.GetProducts)
+	app.Get("/product/:id", routes.GetProductById)
+	app.Put("/product/:id", routes.UpdateProduct)
+	app.Delete("/product/:id", routes.DeleteProduct)
+
+	app.Post("/order", routes.CreateOrder)
+	app.Get("/order/:id", routes.GetOrderById)
 }
 
 func main() {
