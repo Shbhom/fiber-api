@@ -105,3 +105,19 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(responseUser)
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+
+	var user models.User
+	if err != nil {
+		return c.Status(400).JSON("Please make sure that :id is Uint")
+	}
+
+	if err := findUser(id, &user); err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+	responseUser := createResponseUser(user)
+	database.DB.Db.Delete(&user)
+	return c.Status(200).JSON(responseUser)
+}
