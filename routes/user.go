@@ -64,11 +64,44 @@ func GetUserById(c *fiber.Ctx) error {
 	}
 
 	if err := findUser(id, &user); err != nil {
-		return c.Status(400).JSON(err.Error())
+		return c.Status(404).JSON(err.Error())
 	}
 
 	responseUser := createResponseUser(user)
 
 	return c.Status(200).JSON(responseUser)
 
+}
+
+func UpdateUser(c *fiber.Ctx) error {
+	id, err := c.ParamsInt("id")
+
+	var user models.User
+
+	if err != nil {
+		return c.Status(400).JSON("Please make sure that :id is Uint")
+	}
+	if err := findUser(id, &user); err != nil {
+		return c.Status(404).JSON(err.Error())
+	}
+
+	type updatedData struct {
+		Name  string `json:"name"`
+		Email string `json:"email"`
+	}
+
+	var updatedUser updatedData
+
+	if err := c.BodyParser(&updatedUser); err != nil {
+		return c.Status(500).JSON(err.Error())
+	}
+
+	user.Name = updatedUser.Name
+	user.Email = updatedUser.Email
+	database.DB.Db.Save(&user)
+
+	// database.DB.Db.Model(&user).Updates(User{Name: updatedUser.Name, Email: updatedUser.Email})
+	responseUser := createResponseUser(user)
+
+	return c.Status(200).JSON(responseUser)
 }
